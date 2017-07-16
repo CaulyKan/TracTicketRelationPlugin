@@ -29,14 +29,6 @@ class TicketRelationSystem(Component):
     def __init__(self):
         self.found_db_version = 0
 
-    # ITemplateProvider methods
-    def get_htdocs_dirs(self):
-        from pkg_resources import resource_filename
-        return [('ticketrelation', resource_filename(__name__, 'htdocs'))]
-
-    def get_templates_dirs(self):
-        from pkg_resources import resource_filename
-        return [('ticketrelation', resource_filename(__name__, 'templates'))]
 
     # IEnvironmentSetupParticipant methods
 
@@ -160,16 +152,16 @@ class TicketRelationSystem(Component):
 
     def ticket_deleted(self, ticket):
         with self.env.db_transaction as db:
-            for relation_name, role, tid in db('SELECT relation, "a", a FROM ticket_relation WHERE b=%s '
+            for relation_name, role, tid in db('SELECT relation, \'a\' as role, a FROM ticket_relation WHERE b=%s '
                                                'UNION ALL '
-                                               'SELECT relation, "b", b FROM ticket_relation WHERE a=%s'):
+                                               'SELECT relation, \'b\' as role, b FROM ticket_relation WHERE a=%s', (ticket.id, ticket.id)):
                 xticket = Ticket(self.env, tid)
                 self.remove_relation(xticket, tid, relation_name, role)
 
             cursor = db.cursor()
             cursor.execute("""
                 DELETE FROM ticket_relation WHERE a=%s OR b=%s
-                """, (ticket.id, ))
+                """, (ticket.id, ticket.id))
 
     def ticket_changed(self, ticket, comment, author, old_values):
 
@@ -187,19 +179,19 @@ class TicketRelationSystem(Component):
 
                 # remove old relations
                 for target_ticket in old_relations - new_relations:
-                    sql = 'DELETE FROM ticket_relation WHERE %s=%s AND relation=%s AND %s=%s'
-                    cursor.execute(sql, (role, ticket.id, relation.name, self.opposite(role), int(target_ticket.id)))
+                    #sql = 'DELETE FROM ticket_relation WHERE %s=%s AND relation=%s AND %s=%s'
+                    #cursor.execute(sql, (role, ticket.id, relation.name, self.opposite(role), int(target_ticket)))
                     xticket = Ticket(self.env, target_ticket)
-                    self.remove_relation(xticket, ticket.id, relation.name, self.opposite(role))
-                    xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
+                    if self.remove_relation(xticket, ticket.id, relation.name, self.opposite(role)):
+                        xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
 
                 # add new relations
                 for target_ticket in new_relations - old_relations:
-                    sql = 'INSERT INTO ticket_relation(a, b, relation) VALUES(%s, %s, %s)'
-                    cursor.execute(sql, (ticket.id, int(target_ticket), relation.name) if role == 'a' else (target_ticket, ticket.id, relation.name))
+                    #sql = 'INSERT INTO ticket_relation(a, b, relation) VALUES(%s, %s, %s)'
+                    #cursor.execute(sql, (ticket.id, int(target_ticket), relation.name) if role == 'a' else (int(target_ticket), ticket.id, relation.name))
                     xticket = Ticket(self.env, target_ticket)
-                    self.add_relation(xticket, ticket.id, relation.name, self.opposite(role))
-                    xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
+                    if self.add_relation(xticket, ticket.id, relation.name, self.opposite(role)):
+                        xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
 
         for relation in self.build_relations().values():
 
@@ -225,7 +217,7 @@ class TicketRelationSystem(Component):
         value = ticket[relation + '_' + role]
         ids = map(unicode.strip, value.split(',')) if value is not None else []
         if not str(id) in ids:
-            ids.append(id)
+            ids.append(str(id))
             ticket[relation+ '_' + role] = ','.join(ids)
             return True
         else:
@@ -260,6 +252,9 @@ class TicketRelationSystem(Component):
             stream |= Transformer('//head').append(tag.style("""
                 .relation_table {
                     width: 100%;
+                }
+                .relation_table td {
+                    border-bottom: dotted 1px #eed;
                 }
             """))
 

@@ -15,7 +15,7 @@ Created on 2014-03-12
 from setuptools import find_packages, setup
 
 setup(
-    name='TracTicketRelationPlugin', version='1.1',
+    name='TracTicketRelationPlugin', version='1.2',
     packages=find_packages(exclude=['*.tests*']),
     license = "BSD 3-Clause",
     author_email='cauliflower.kan@gmail.com',
@@ -25,6 +25,7 @@ setup(
         'trac.plugins': [
             'TracTicketRelationPlugin.api = ticketrelation.api',
             'TracTicketRelationPlugin.rpc = ticketrelation.xmlrpc',
+            'TracTicketRelationPlugin.select_ticket= ticketrelation.select_ticket',
         ],
     },
 )

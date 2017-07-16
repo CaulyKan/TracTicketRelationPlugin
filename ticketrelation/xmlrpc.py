@@ -37,4 +37,4 @@ class TicketRelationRPC(Component):
 
         result = ticket_relation_system.build_relations()
 
-        return result
+        return [i.__dict__ for i in result.values()]
