@@ -20,7 +20,7 @@ setup(
     license = "BSD 3-Clause",
     author_email='cauliflower.kan@gmail.com',
     author='Cauly Kan',
-    package_data={ 'ticketrelation': ['htdocs/*', 'templates/*.html'] },
+    package_data={ 'ticketrelation': ['htdocs/js/*.js', 'htdocs/images/*.png', 'templates/*.html'] },
     entry_points={
         'trac.plugins': [
             'TracTicketRelationPlugin.api = ticketrelation.api',

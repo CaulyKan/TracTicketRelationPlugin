@@ -1,14 +1,4 @@
 
-function newTicket(event, isMany, querystr) {
-    var w = PopupCenter('/newticket', 'newwindow', '720', '480');
-    w.focus();
-    var timer = setInterval(function() {
-        if (w.closed) {
-            clearInterval(timer);
-            $(event.target).val(w.result);
-        }
-    }, 500);
-}
 
 function PopupCenter(url, title, w, h) {
     // Fixes dual-screen position                         Most browsers      Firefox
@@ -33,7 +23,7 @@ function PopupCenter(url, title, w, h) {
 Vue.component('relation-single', {
     template: "\
         <div> \
-        <input v-model='relation.value' :name='\"field-\" + relation.name + \"_\" + relation.role' type='hidden' /> \
+        <input v-model='relation.value' :name='\"field_\" + relation.name + \"_\" + relation.role' type='hidden' /> \
         <a :href='\"/ticket/\" + relation.value' v-if='relation.value'> #{{relation.value}} {{relation.ticket? relation.ticket.attributers['summary']: ''}} </a> \
         <img :src='\"/chrome/ticketrelation/images/search.png\"' @click='selectTicket' /> \
         <img :src='\"/chrome/ticketrelation/images/add.png\"' @click='addNew' /> \
@@ -66,8 +56,7 @@ Vue.component('relation-single', {
                 if (w.closed) {
                     clearInterval(timer);
                 }
-
-                if (w.location.pathname.startsWith('/ticket/')) {
+                else if (w.location.pathname.startsWith('/ticket/')) {
                     clearInterval(timer);
                     $this.setValue(w.location.pathname.substring('/ticket/'.length));
                     w.close();
@@ -85,8 +74,8 @@ Vue.component('relation-single', {
 Vue.component('relation-multi', {
     template: "\
         <div> \
-        <input v-model='relation.value' :name='\"field-\" + relation.name + \"_\" + relation.role' type='hidden' /> \
-        <p v-for='id in ids'> \
+        <input v-model='relation.value' :name='\"field_\" + relation.name + \"_\" + relation.role' type='hidden' /> \
+        <p v-for='id in ids' style='margin: 0;'> \
             <a :href='\"/ticket/\" + id'> #{{id}} </a> \
             <img :src='\"/chrome/ticketrelation/images/delete.png\"' @click='remove(id)' /> \
         </p> \
@@ -114,8 +103,8 @@ Vue.component('relation-multi', {
         },
 
         add: function (newids) {
-            for (var i in newids) {
-                var id = newids[i];
+            for (var i in newids.split(',')) {
+                var id = newids.split(',')[i];
                 if (this.relation.value) {
                     var ids = this.relation.value.split(',');
                     var index = ids.indexOf(id);
@@ -152,8 +141,7 @@ Vue.component('relation-multi', {
                 if (w.closed) {
                     clearInterval(timer);
                 }
-
-                if (w.location.pathname.startsWith('/ticket/')) {
+                else if (w.location.pathname.startsWith('/ticket/')) {
                     clearInterval(timer);
                     $this.add(w.location.pathname.substring('/ticket/'.length));
                     w.close();
