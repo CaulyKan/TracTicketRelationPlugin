@@ -54,8 +54,7 @@ class SelectTicketPlugin(Component):
                 elif relation.ticket_type_b == ticket['type']:
                     stream = self._generate_html(relation, relation.relation_type_b, 'b', stream, ticket, data)
 
-            add_script(req, 'ticketrelation/js/vue.js')
-            add_script(req, 'ticketrelation/js/select_tickets.js')
+            add_script(req, 'ticketrelation/js/select_tickets_bundle.js')
 
             stream |= Transformer('//body').append(tag.script("""
                 var data = %s;

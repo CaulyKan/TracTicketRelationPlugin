@@ -1,17 +1,12 @@
 
 from trac.core import Component, implements
-from trac.env import IEnvironmentSetupParticipant
-from trac.db import DatabaseManager
-from trac.web.chrome import ITemplateProvider
 from trac.web import ITemplateStreamFilter
 from trac.ticket import ITicketManipulator, ITicketChangeListener
 from trac.ticket.model import Ticket, TicketSystem
-from trac.ticket.notification import TicketNotifyEmail
 from genshi.filters import Transformer
 from genshi.builder import tag
 
 import re
-import db_default
 
 NUMBERS_RE = re.compile(r'\d+', re.U)
 VALID_RELATION = re.compile(r'^[\d, ]+$')
@@ -19,78 +14,13 @@ VALID_RELATION = re.compile(r'^[\d, ]+$')
 
 class TicketRelationSystem(Component):
 
-    implements(IEnvironmentSetupParticipant,
+    implements(
                #ITemplateProvider,
                ITemplateStreamFilter,
                ITicketChangeListener,
                #ITicketManipulator
     )
 
-    def __init__(self):
-        self.found_db_version = 0
-
-
-    # IEnvironmentSetupParticipant methods
-
-    def environment_created(self):
-        self.upgrade_environment()
-
-    def environment_needs_upgrade(self, db):
-        cursor = db.cursor()
-        cursor.execute("""
-                    SELECT value FROM system WHERE name=%s
-                    """, (db_default.name,))
-        value = cursor.fetchone()
-        try:
-            self.found_db_version = int(value[0])
-            if self.found_db_version < db_default.version:
-                return True
-        except:
-            return True
-
-        return False
-
-    def upgrade_environment(self, db=None):
-        db_manager, _ = DatabaseManager(self.env)._get_connector()
-
-        # update the version
-        with self.env.db_transaction as db:
-            old_data = {}  # {table.name: (cols, rows)}
-            cursor = db.cursor()
-            if not self.found_db_version:
-                cursor.execute("""
-                     INSERT INTO system (name, value) VALUES (%s, %s)
-                     """, (db_default.name, db_default.version))
-            else:
-                cursor.execute("""
-                     UPDATE system SET value=%s WHERE name=%s
-                     """, (db_default.version, db_default.name))
-
-                for table in db_default.tables:
-                    cursor.execute("""
-                         SELECT * FROM """ + table.name)
-                    cols = [x[0] for x in cursor.description]
-                    rows = cursor.fetchall()
-                    old_data[table.name] = (cols, rows)
-                    cursor.execute("""
-                         DROP TABLE """ + table.name)
-
-            # insert the default table
-            for table in db_default.tables:
-                for sql in db_manager.to_sql(table):
-                    cursor.execute(sql)
-
-                # add old data
-                if table.name in old_data:
-                    cols, rows = old_data[table.name]
-                    sql = """
-                         INSERT INTO %s (%s) VALUES (%s)
-                         """ % (table.name, ','.join(cols), ','.join(['%s'] * len(cols)))
-                    for row in rows:
-                        cursor.execute(sql, row)
-
-        relation = self.build_relations()
-        self.check_and_create_fields(relation)
 
     _relations = None
     _relations_ready = False
@@ -151,47 +81,45 @@ class TicketRelationSystem(Component):
         pass
 
     def ticket_deleted(self, ticket):
-        with self.env.db_transaction as db:
-            for relation_name, role, tid in db('SELECT relation, \'a\' as role, a FROM ticket_relation WHERE b=%s '
-                                               'UNION ALL '
-                                               'SELECT relation, \'b\' as role, b FROM ticket_relation WHERE a=%s', (ticket.id, ticket.id)):
-                xticket = Ticket(self.env, tid)
-                self.remove_relation(xticket, tid, relation_name, role)
 
-            cursor = db.cursor()
-            cursor.execute("""
-                DELETE FROM ticket_relation WHERE a=%s OR b=%s
-                """, (ticket.id, ticket.id))
+        def _relation_changed(relation, role):
+
+            relations = set(NUMBERS_RE.findall(ticket[relation.name + '_' + role] or ''))
+
+            for target_ticket in relations:
+                xticket = Ticket(self.env, target_ticket)
+                if self.remove_relation(xticket, ticket.id, relation.name, self.opposite(role)):
+                    xticket.save_changes('', '(#%s %s) %s' % (ticket.id, ticket['summary'], 'Ticket deleted.'))
+
+        for relation in self.build_relations().values():
+
+            if relation.ticket_type_a == ticket['type']:
+                _relation_changed(relation, 'a')
+            if relation.ticket_type_b == ticket['type']:
+                _relation_changed(relation, 'b')
 
     def ticket_changed(self, ticket, comment, author, old_values):
 
         def _relation_changed(relation, role):
 
-            with self.env.db_transaction as db:
-                cursor = db.cursor()
+            old_relations = old_values.get(relation.name + '_' + role, '') or ''
+            old_relations = set(NUMBERS_RE.findall(old_relations))
+            new_relations = set(NUMBERS_RE.findall(ticket[relation.name + '_' + role] or ''))
 
-                old_relations = old_values.get(relation.name + '_' + role, '') or ''
-                old_relations = set(NUMBERS_RE.findall(old_relations))
-                new_relations = set(NUMBERS_RE.findall(ticket[relation.name + '_' + role] or ''))
+            if new_relations == old_relations:
+                return
 
-                if new_relations == old_relations:
-                    return
+            # remove old relations
+            for target_ticket in old_relations - new_relations:
+                xticket = Ticket(self.env, target_ticket)
+                if self.remove_relation(xticket, ticket.id, relation.name, self.opposite(role)):
+                    xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
 
-                # remove old relations
-                for target_ticket in old_relations - new_relations:
-                    #sql = 'DELETE FROM ticket_relation WHERE %s=%s AND relation=%s AND %s=%s'
-                    #cursor.execute(sql, (role, ticket.id, relation.name, self.opposite(role), int(target_ticket)))
-                    xticket = Ticket(self.env, target_ticket)
-                    if self.remove_relation(xticket, ticket.id, relation.name, self.opposite(role)):
-                        xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
-
-                # add new relations
-                for target_ticket in new_relations - old_relations:
-                    #sql = 'INSERT INTO ticket_relation(a, b, relation) VALUES(%s, %s, %s)'
-                    #cursor.execute(sql, (ticket.id, int(target_ticket), relation.name) if role == 'a' else (int(target_ticket), ticket.id, relation.name))
-                    xticket = Ticket(self.env, target_ticket)
-                    if self.add_relation(xticket, ticket.id, relation.name, self.opposite(role)):
-                        xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
+            # add new relations
+            for target_ticket in new_relations - old_relations:
+                xticket = Ticket(self.env, target_ticket)
+                if self.add_relation(xticket, ticket.id, relation.name, self.opposite(role)):
+                    xticket.save_changes(author, '(#%s %s) %s' % (ticket.id, ticket['summary'], comment))
 
         for relation in self.build_relations().values():
 
@@ -207,6 +135,7 @@ class TicketRelationSystem(Component):
         value = ticket[relation+ '_' + role]
         ids = map(unicode.strip, value.split(',')) if value is not None else []
         if str(id) in ids:
+            if '' in ids: ids.remove('')
             ids.remove(str(id))
             ticket[relation+ '_' + role] = ','.join(ids)
             return True
@@ -217,6 +146,7 @@ class TicketRelationSystem(Component):
         value = ticket[relation + '_' + role]
         ids = map(unicode.strip, value.split(',')) if value is not None else []
         if not str(id) in ids:
+            if '' in ids: ids.remove('')
             ids.append(str(id))
             ticket[relation+ '_' + role] = ','.join(ids)
             return True
