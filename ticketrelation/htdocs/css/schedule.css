@@ -1,0 +1,60 @@
+.schedule_header h3 {
+    border-bottom: 1px solid #d7d7d7;
+    box-shadow: .1em .2em .4em 0 #f2f2f2;
+    padding: 0 .2em;
+    margin-bottom: .2em;
+    color: #999;
+    font-size: 100%;
+    font-weight: normal;
+}
+
+.schedule_ticket_header_status {
+    font-size: 80%;
+    color: #999;
+}
+
+#schedule_container td {
+    padding: 0;
+}
+
+tr.schedule_plan_row td.schedule_bar {
+    border: #bae0ba solid 1px;
+    background: #dcefdc;
+    box-shadow: 0.1em 0.2em 0.4em 0 #f2f2f2
+}
+
+tr.schedule_actual_row td.schedule_bar {
+    background: #ffd;
+    border: 1px solid #dd9;
+    box-shadow: 0.1em 0.2em 0.4em 0 #f2f2f2
+}
+
+tr.schedule_plan_row, tr.schedule_actual_row {
+    height: 8px;
+}
+
+#schedule_container table {
+    width: 100%;
+}
+
+.schedule_date_left {
+    float: left;
+}
+
+.schedule_date_right {
+    float: right;
+}
+
+.schedule_date_row {
+    font-size: 60%;
+    color: #999;
+}
+
+.schedule_today {
+    color: #999;
+}
+
+.schedule_today_fix {
+    position: relative;
+    left: -5px;
+}

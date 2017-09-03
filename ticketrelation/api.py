@@ -76,6 +76,15 @@ class TicketRelationSystem(Component):
         if dirty:
             self.config.save()
 
+
+    def get_relations_id(self, ticket, relation, role):
+        relations = set(NUMBERS_RE.findall(ticket[relation.name + '_' + role] or ''))
+        return relations
+
+    def get_relations(self, ticket, relation, role):
+        id = self.get_relations_id(ticket, relation, role)
+        return map(lambda x: Ticket(self.env, x), id)
+
     # ITicketChangeListener methods
     def ticket_created(self, ticket):
         pass
@@ -84,12 +93,13 @@ class TicketRelationSystem(Component):
 
         def _relation_changed(relation, role):
 
-            relations = set(NUMBERS_RE.findall(ticket[relation.name + '_' + role] or ''))
+            relations = relation.get_relations_id(ticket, relation, role)
 
             for target_ticket in relations:
                 xticket = Ticket(self.env, target_ticket)
                 if self.remove_relation(xticket, ticket.id, relation.name, self.opposite(role)):
                     xticket.save_changes('', '(#%s %s) %s' % (ticket.id, ticket['summary'], 'Ticket deleted.'))
+
 
         for relation in self.build_relations().values():
 
@@ -257,3 +267,19 @@ class Relation(object):
         except:
 
             raise Exception('Ticket Relation: %s is not properly configured.' % name)
+
+    def get_ticket_type(self, role):
+        if role == 'a':
+            return self.ticket_type_a
+        elif role == 'b':
+            return self.ticket_type_b
+        else:
+            return None
+
+    def get_label(self, role):
+        if role == 'a':
+            return self.label_a
+        elif role == 'b':
+            return self.label_b
+        else:
+            return None

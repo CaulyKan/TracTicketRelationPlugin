@@ -60,7 +60,7 @@
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 2);
+/******/ 	return __webpack_require__(__webpack_require__.s = 3);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -162,52 +162,6 @@ module.exports = function normalizeComponent (
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
-
-function PopupCenter(url, title, w, h) {
-    // Fixes dual-screen position                         Most browsers      Firefox
-    var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
-    var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
-
-    var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
-    var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
-
-    var left = ((width / 2) - (w / 2)) + dualScreenLeft;
-    var top = ((height / 2) - (h / 2)) + dualScreenTop;
-    var newWindow = window.open(url, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
-
-    // Puts focus on the newWindow
-    if (window.focus) {
-        newWindow.focus();
-    }
-
-    return newWindow;
-}
-
-module.exports = PopupCenter;
-
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__relation_single_vue__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__relation_multi_vue__ = __webpack_require__(9);
-
-
-
-
-
-window.Vue = __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */];
-
-__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].component('relation-single', __WEBPACK_IMPORTED_MODULE_1__relation_single_vue__["a" /* default */]);
-__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].component('relation-multi', __WEBPACK_IMPORTED_MODULE_2__relation_multi_vue__["a" /* default */]);
-
-
-/***/ }),
-/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10297,10 +10251,64 @@ Vue$3.compile = compileToFunctions;
 
 /* harmony default export */ __webpack_exports__["a"] = (Vue$3);
 
-/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(4), __webpack_require__(5)))
+/* WEBPACK VAR INJECTION */}.call(__webpack_exports__, __webpack_require__(5), __webpack_require__(6)))
+
+/***/ }),
+/* 2 */
+/***/ (function(module, exports) {
+
+function PopupCenter(url, title, w, h) {
+    // Fixes dual-screen position                         Most browsers      Firefox
+    var dualScreenLeft = window.screenLeft != undefined ? window.screenLeft : screen.left;
+    var dualScreenTop = window.screenTop != undefined ? window.screenTop : screen.top;
+
+    var width = window.innerWidth ? window.innerWidth : document.documentElement.clientWidth ? document.documentElement.clientWidth : screen.width;
+    var height = window.innerHeight ? window.innerHeight : document.documentElement.clientHeight ? document.documentElement.clientHeight : screen.height;
+
+    var left = ((width / 2) - (w / 2)) + dualScreenLeft;
+    var top = ((height / 2) - (h / 2)) + dualScreenTop;
+    var newWindow = window.open(url, title, 'scrollbars=yes, width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
+
+    // Puts focus on the newWindow
+    if (window.focus) {
+        newWindow.focus();
+    }
+
+    return newWindow;
+}
+
+module.exports = PopupCenter;
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+__webpack_require__(4);
+module.exports = __webpack_require__(13);
+
 
 /***/ }),
 /* 4 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__relation_single_vue__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__relation_multi_vue__ = __webpack_require__(10);
+
+
+
+
+
+window.Vue = __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */];
+
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].component('relation-single', __WEBPACK_IMPORTED_MODULE_1__relation_single_vue__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].component('relation-multi', __WEBPACK_IMPORTED_MODULE_2__relation_multi_vue__["a" /* default */]);
+
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports) {
 
 // shim for using process in browser
@@ -10490,7 +10498,7 @@ process.umask = function() { return 0; };
 
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, exports) {
 
 var g;
@@ -10517,13 +10525,13 @@ module.exports = g;
 
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_single_vue__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_single_vue__ = __webpack_require__(8);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_single_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_single_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_124de901_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_relation_single_vue__ = __webpack_require__(8);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_124de901_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_relation_single_vue__ = __webpack_require__(9);
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
@@ -10567,7 +10575,7 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -10582,7 +10590,7 @@ if (false) {(function () {
 //
 //
 
-var PopupCenter = __webpack_require__(1);
+var PopupCenter = __webpack_require__(2);
 module.exports = {
     props: ['relation'],
     methods: {
@@ -10627,7 +10635,7 @@ module.exports = {
 
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10684,13 +10692,13 @@ if (false) {
 }
 
 /***/ }),
-/* 9 */
+/* 10 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_multi_vue__ = __webpack_require__(10);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_multi_vue__ = __webpack_require__(11);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_multi_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_relation_multi_vue__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_714f35e0_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_relation_multi_vue__ = __webpack_require__(11);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_714f35e0_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_relation_multi_vue__ = __webpack_require__(12);
 var disposed = false
 var normalizeComponent = __webpack_require__(0)
 /* script */
@@ -10734,7 +10742,7 @@ if (false) {(function () {
 
 
 /***/ }),
-/* 10 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 //
@@ -10752,7 +10760,7 @@ if (false) {(function () {
 //
 //
 
-var PopupCenter = __webpack_require__(1);
+var PopupCenter = __webpack_require__(2);
 module.exports = {
     props: ['relation'],
     computed: {
@@ -10828,7 +10836,7 @@ module.exports = {
 
 
 /***/ }),
-/* 11 */
+/* 12 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10896,6 +10904,572 @@ if (false) {
   module.hot.accept()
   if (module.hot.data) {
      require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-714f35e0", esExports)
+  }
+}
+
+/***/ }),
+/* 13 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_vue__ = __webpack_require__(1);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__schedule_vue__ = __webpack_require__(14);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__schedule_item_vue__ = __webpack_require__(17);
+
+
+
+
+
+window.Vue = __WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */];
+
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].component('schedule', __WEBPACK_IMPORTED_MODULE_1__schedule_vue__["a" /* default */]);
+__WEBPACK_IMPORTED_MODULE_0_vue__["a" /* default */].component('schedule-item', __WEBPACK_IMPORTED_MODULE_2__schedule_item_vue__["a" /* default */]);
+
+
+
+/***/ }),
+/* 14 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_vue__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_73fb2dff_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_schedule_vue__ = __webpack_require__(16);
+var disposed = false
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+/* template */
+
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_vue___default.a,
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_73fb2dff_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_schedule_vue__["a" /* default */],
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "schedule.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] schedule.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-73fb2dff", Component.options)
+  } else {
+    hotAPI.reload("data-v-73fb2dff", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+//
+//
+//
+//
+//
+//
+//
+
+module.exports = {
+    props: ['schedule'],
+    methods: {
+    }
+}
+
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', _vm._l((_vm.schedule), function(ticketInfo, relationName) {
+    return _c('div', [_c('schedule-item', {
+      attrs: {
+        "relationName": relationName,
+        "tickets": ticketInfo
+      }
+    })], 1)
+  }))
+}
+var staticRenderFns = []
+render._withStripped = true
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-73fb2dff", esExports)
+  }
+}
+
+/***/ }),
+/* 17 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_item_vue__ = __webpack_require__(18);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_item_vue___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_item_vue__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_44997c51_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_schedule_item_vue__ = __webpack_require__(19);
+var disposed = false
+var normalizeComponent = __webpack_require__(0)
+/* script */
+
+/* template */
+
+/* styles */
+var __vue_styles__ = null
+/* scopeId */
+var __vue_scopeId__ = null
+/* moduleIdentifier (server only) */
+var __vue_module_identifier__ = null
+var Component = normalizeComponent(
+  __WEBPACK_IMPORTED_MODULE_0__node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_script_index_0_schedule_item_vue___default.a,
+  __WEBPACK_IMPORTED_MODULE_1__node_modules_vue_loader_13_0_4_vue_loader_lib_template_compiler_index_id_data_v_44997c51_hasScoped_false_node_modules_vue_loader_13_0_4_vue_loader_lib_selector_type_template_index_0_schedule_item_vue__["a" /* default */],
+  __vue_styles__,
+  __vue_scopeId__,
+  __vue_module_identifier__
+)
+Component.options.__file = "schedule-item.vue"
+if (Component.esModule && Object.keys(Component.esModule).some(function (key) {return key !== "default" && key.substr(0, 2) !== "__"})) {console.error("named exports are not supported in *.vue files.")}
+if (Component.options.functional) {console.error("[vue-loader] schedule-item.vue: functional components are not supported with templates, they should use render functions.")}
+
+/* hot reload */
+if (false) {(function () {
+  var hotAPI = require("vue-loader/node_modules/vue-hot-reload-api")
+  hotAPI.install(require("vue"), false)
+  if (!hotAPI.compatible) return
+  module.hot.accept()
+  if (!module.hot.data) {
+    hotAPI.createRecord("data-v-44997c51", Component.options)
+  } else {
+    hotAPI.reload("data-v-44997c51", Component.options)
+  }
+  module.hot.dispose(function (data) {
+    disposed = true
+  })
+})()}
+
+/* harmony default export */ __webpack_exports__["a"] = (Component.exports);
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+module.exports = {
+    props: ['relationName', 'tickets'],
+    created: function() {
+        var self = this;
+        this.tickets.forEach(function(t) {
+            t.activity_start_date = self.toDate(t.activity_start_date);
+            t.activity_started_date = self.toDate(t.activity_started_date);
+            t.activity_finish_date = self.toDate(t.activity_finish_date);
+            t.activity_finished_date = self.toDate(t.activity_finished_date);
+        });
+    },
+    computed: {
+        name: function () {
+            return this.relationName.split(',')[0];
+        },
+        displayName: function () {
+            return this.relationName.split(',')[1];
+        },
+        startDate: function () {
+            var result = null;
+            this.tickets.forEach(function (t) {
+                if (t.activity_start_date instanceof Date && (t.activity_start_date < result || result == null)) {
+                    result = t.activity_start_date;
+                }
+                if (t.activity_started_date instanceof Date && (t.activity_started_date < result || result == null)) {
+                    result = t.activity_started_date;
+                }
+            });
+            return result;
+        },
+        finishDate: function () {
+            var result = null;
+            this.tickets.forEach(function (t) {
+                if (t.activity_finish_date instanceof Date && (t.activity_finish_date > result || result == null)) {
+                    result = t.activity_finish_date;
+                }
+                if (t.activity_finished_date instanceof Date && (t.activity_finished_date > result || result == null)) {
+                    result = t.activity_finished_date;
+                }
+                if (t.activity_finished_date == null && t.activity_started_date instanceof Date) {
+                    if (this.now > result || result == null) {
+                        result = this.now;
+                    }
+                }
+            });
+            return result;
+        },
+        totalDays: function () {
+            return this.diffDate(this.startDate, this.finishDate);
+        },
+        todayStatus: function () {
+            if (this.getDateStr(this.finishDate) == this.getDateStr(this.now)) {
+                return 'right-most';
+            }
+            else if (this.now > this.finishDate) {
+                return 'beyond-right';
+            }
+            else if (this.now < this.startDate) {
+                return 'beyond-left';
+            }
+            else return 'normal';
+        },
+        todayPosition: function () {
+            return (this.diffDate(this.startDate, this.now) / this.totalDays * 100) + '%';
+        },
+        now: function () {
+            return this.toDate(new Date(Date.now()));
+        }
+    },
+    methods: {
+        isPlanAvailable: function (ticket) {
+            return ticket.activity_finish_date instanceof Date && ticket.activity_start_date  instanceof Date;
+        },
+        isActualAvailable: function (ticket) {
+            if (!ticket.activity_started_date instanceof Date) return false;
+            if (ticket.activity_finished_date instanceof Date) return true;
+            if (ticket.activity_finished_date == null) return true;
+            return false;
+        },
+        getPlanSpaces: function(ticket) {
+            if (this.isPlanAvailable(ticket)) {
+                return [
+                    (this.diffDate(this.startDate, ticket.activity_start_date) / this.totalDays * 100) + '%',
+                    (this.diffDate(ticket.activity_start_date, ticket.activity_finish_date) / this.totalDays * 100) + '%',
+                    (this.diffDate(ticket.activity_finish_date, this.finishDate) / this.totalDays * 100) + '%',
+                ];
+            }
+            else return [0,0,0];
+        },
+        getActualSpaces: function(ticket) {
+            if (this.isActualAvailable(ticket)) {
+                var fn = ticket.activity_finished_date == null? this.now: ticket.activity_finished_date;
+                return [
+                    (this.diffDate(this.startDate, ticket.activity_started_date) / this.totalDays * 100) + '%',
+                    (this.diffDate(ticket.activity_started_date, fn) / this.totalDays * 100) + '%',
+                    (this.diffDate(fn, this.finishDate) / this.totalDays * 100) + '%',
+                ];
+            }
+            else return [0,0,0];
+        },
+        diffDate: function (date1, date2) {
+            return parseInt((date2 - date1)/(24*3600*1000));
+        },
+        isDate: function (data) {
+            if (data instanceof Date && data.toString() != "Invalid Date") return True;
+            if (typeof(data) == 'string' ) {
+                var result = new Date(data);
+                return result.toString() != "Invalid Date";
+            }
+            else return false;
+        },
+        toDate: function (data) {
+            if (typeof(data) == 'string' && this.isDate(data)) {
+                var date = new Date(data);
+                var y = date.getFullYear();
+                var m = date.getMonth();
+                var d = date.getDate();
+                return new Date(y, m, d, 0, 0, 0);
+            }
+            else if (data instanceof Date) {
+                var date = data;
+                var y = date.getFullYear();
+                var m = date.getMonth();
+                var d = date.getDate();
+                return new Date(y, m, d, 0, 0, 0);
+            }
+            else return data;
+        },
+        getDateStr: function (date) {
+            var y = date.getFullYear();
+            var m = date.getMonth() + 1;
+            var d = date.getDate();
+            return y + '-' + m + '-' + d;
+        }
+    }
+}
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
+  return _c('div', [_c('div', {
+    staticClass: "schedule_header"
+  }, [_c('h3', [_vm._v(_vm._s(_vm.displayName))])]), _vm._v(" "), _c('div', [_c('table', [_c('tr', [_c('td', {
+    attrs: {
+      "width": "20%"
+    }
+  }), _vm._v(" "), _c('td', [_c('table', [_c('tbody', [_c('tr', [(_vm.todayStatus == 'right-most') ? _c('td', {
+    staticClass: "schedule_today schedule_date_right"
+  }, [_vm._v("Today ▼")]) : (_vm.todayStatus == 'beyond-right') ? _c('td', {
+    staticClass: "schedule_today schedule_date_right"
+  }, [_vm._v("Today (" + _vm._s(_vm.diffDate(_vm.finishDate, _vm.now)) + ") ▶")]) : (_vm.todayStatus == 'beyond-left') ? _c('td', {
+    staticClass: "schedule_today"
+  }, [_vm._v("◀ Today (" + _vm._s(_vm.diffDate(_vm.now, _vm.startDate)) + ")")]) : _c('td', {
+    staticClass: "schedule_today",
+    attrs: {
+      "width": _vm.todayPosition
+    }
+  }), _vm._v(" "), _c('td', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.todayStatus == 'normal'),
+      expression: "todayStatus=='normal'"
+    }],
+    staticClass: "schedule_today schedule_today_fix"
+  }, [_vm._v("▼ Today")])])])])])])]), _vm._v(" "), _vm._l((_vm.tickets), function(ticket) {
+    return _c('div', [_c('table', [_c('tbody', [_c('tr', [_c('td', {
+      attrs: {
+        "width": "20%"
+      }
+    }, [_c('div', {
+      staticClass: "schedule_ticket_header"
+    }, [_c('a', {
+      attrs: {
+        "href": ticket.id
+      }
+    }, [_vm._v("#" + _vm._s(ticket.id) + " " + _vm._s(ticket.summary) + " ")])]), _vm._v(" "), _c('div', {
+      staticClass: "schedule_ticket_header_status"
+    }, [_vm._v(_vm._s(ticket.status))])]), _vm._v(" "), _c('td', [(_vm.isPlanAvailable(ticket)) ? _c('table', {
+      staticClass: "schedule_table"
+    }, [_c('tbody', [_c('tr', {
+      staticClass: "schedule_date_row"
+    }, [_c('td', {
+      staticClass: "schedule_leading_space",
+      attrs: {
+        "width": _vm.getPlanSpaces(ticket)[0]
+      }
+    }), _vm._v(" "), _c('td', {
+      staticClass: "schedule_date_cell",
+      attrs: {
+        "width": _vm.getPlanSpaces(ticket)[1]
+      }
+    }, [_c('div', {
+      staticClass: "schedule_date_left"
+    }, [_vm._v(_vm._s(_vm.getDateStr(ticket.activity_start_date)))]), _vm._v(" "), _c('div', {
+      staticClass: "schedule_date_right"
+    }, [_vm._v(_vm._s(_vm.getDateStr(ticket.activity_finish_date)))])]), _vm._v(" "), _c('td', {
+      staticClass: "schedule_following_space",
+      attrs: {
+        "width": _vm.getPlanSpaces(ticket)[2]
+      }
+    })]), _vm._v(" "), _c('tr', {
+      staticClass: "schedule_plan_row"
+    }, [_c('td', {
+      staticClass: "schedule_leading_space",
+      attrs: {
+        "width": _vm.getPlanSpaces(ticket)[0]
+      }
+    }), _vm._v(" "), _c('td', {
+      staticClass: "schedule_bar",
+      attrs: {
+        "width": _vm.getPlanSpaces(ticket)[1]
+      }
+    }), _vm._v(" "), _c('td', {
+      staticClass: "schedule_following_space",
+      attrs: {
+        "width": _vm.getPlanSpaces(ticket)[2]
+      }
+    })])])]) : _vm._e(), _vm._v(" "), (_vm.isActualAvailable(ticket)) ? _c('table', {
+      staticClass: "schedule_table"
+    }, [_c('tbody', [_c('tr', {
+      staticClass: "schedule_actual_row"
+    }, [_c('td', {
+      staticClass: "schedule_leading_space",
+      attrs: {
+        "width": _vm.getActualSpaces(ticket)[0]
+      }
+    }), _vm._v(" "), _c('td', {
+      staticClass: "schedule_bar",
+      attrs: {
+        "width": _vm.getActualSpaces(ticket)[1]
+      }
+    }), _vm._v(" "), _c('td', {
+      staticClass: "schedule_following_space",
+      attrs: {
+        "width": _vm.getActualSpaces(ticket)[2]
+      }
+    })]), _vm._v(" "), _c('tr', {
+      staticClass: "schedule_date_row"
+    }, [_c('td', {
+      staticClass: "schedule_leading_space",
+      attrs: {
+        "width": _vm.getActualSpaces(ticket)[0]
+      }
+    }), _vm._v(" "), _c('td', {
+      staticClass: "schedule_date_cell",
+      attrs: {
+        "width": _vm.getActualSpaces(ticket)[1]
+      }
+    }, [_c('div', {
+      staticClass: "schedule_date_left"
+    }, [_vm._v(_vm._s(_vm.getDateStr(ticket.activity_started_date)))]), _vm._v(" "), _c('div', {
+      staticClass: "schedule_date_right"
+    }, [_vm._v(_vm._s(_vm.getDateStr(ticket.activity_finished_date == null ? _vm.now : ticket.activity_finished_date)))])]), _vm._v(" "), _c('td', {
+      staticClass: "schedule_following_space",
+      attrs: {
+        "width": _vm.getActualSpaces(ticket)[2]
+      }
+    })])])]) : _vm._e(), _vm._v(" "), (!_vm.isPlanAvailable(ticket) && !_vm.isActualAvailable(ticket)) ? _c('div', [_vm._v("No available schedule info.")]) : _vm._e()])])])])])
+  }), _vm._v(" "), _c('table', [_c('tr', [_c('td', {
+    attrs: {
+      "width": "20%"
+    }
+  }), _vm._v(" "), _c('td', [_c('table', [_c('tbody', [_c('tr', [(_vm.todayStatus == 'right-most') ? _c('td', {
+    staticClass: "schedule_today schedule_date_right"
+  }, [_vm._v("Today ▲")]) : (_vm.todayStatus == 'beyond-right') ? _c('td', {
+    staticClass: "schedule_today schedule_date_right"
+  }, [_vm._v("Today (" + _vm._s(_vm.diffDate(_vm.finishDate, _vm.now)) + ") ▶")]) : (_vm.todayStatus == 'beyond-left') ? _c('td', {
+    staticClass: "schedule_today"
+  }, [_vm._v("◀ Today (" + _vm._s(_vm.diffDate(_vm.now, _vm.startDate)) + ")")]) : _c('td', {
+    staticClass: "schedule_today",
+    attrs: {
+      "width": _vm.todayPosition
+    }
+  }), _vm._v(" "), _c('td', {
+    directives: [{
+      name: "show",
+      rawName: "v-show",
+      value: (_vm.todayStatus == 'normal'),
+      expression: "todayStatus=='normal'"
+    }],
+    staticClass: "schedule_today schedule_today_fix"
+  }, [_vm._v("▲ Today")])])])])])])])], 2)])
+}
+var staticRenderFns = []
+render._withStripped = true
+var esExports = { render: render, staticRenderFns: staticRenderFns }
+/* harmony default export */ __webpack_exports__["a"] = (esExports);
+if (false) {
+  module.hot.accept()
+  if (module.hot.data) {
+     require("vue-loader/node_modules/vue-hot-reload-api").rerender("data-v-44997c51", esExports)
   }
 }
 

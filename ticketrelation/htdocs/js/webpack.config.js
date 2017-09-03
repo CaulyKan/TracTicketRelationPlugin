@@ -1,7 +1,11 @@
 module.exports = {
-    entry: './select_tickets.js',
+    entry: [
+        './select_tickets.js',
+        './schedule.js',
+    ],
+
     output: {
-        filename: 'select_tickets_bundle.js',
+        filename: 'bundle.js',
     },
     module: {
         rules: [

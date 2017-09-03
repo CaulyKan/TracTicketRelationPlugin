@@ -15,17 +15,18 @@ Created on 2014-03-12
 from setuptools import find_packages, setup
 
 setup(
-    name='TracTicketRelationPlugin', version='1.2',
+    name='TracTicketRelationPlugin', version='1.3',
     packages=find_packages(exclude=['*.tests*']),
     license = "BSD 3-Clause",
     author_email='cauliflower.kan@gmail.com',
     author='Cauly Kan',
-    package_data={ 'ticketrelation': ['htdocs/js/*.js', 'htdocs/images/*.png', 'templates/*.html'] },
+    package_data={ 'ticketrelation': ['htdocs/js/*.js', 'htdocs/images/*.png', 'htdocs/css/*.css', 'templates/*.html'] },
     entry_points={
         'trac.plugins': [
             'TracTicketRelationPlugin.api = ticketrelation.api',
             'TracTicketRelationPlugin.rpc = ticketrelation.xmlrpc',
             'TracTicketRelationPlugin.select_ticket= ticketrelation.select_ticket',
+            'TracTicketRelationPlugin.schedule = ticketrelation.schedule',
         ],
     },
 )

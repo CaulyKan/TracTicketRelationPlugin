@@ -54,9 +54,10 @@ class SelectTicketPlugin(Component):
                 elif relation.ticket_type_b == ticket['type']:
                     stream = self._generate_html(relation, relation.relation_type_b, 'b', stream, ticket, data)
 
-            add_script(req, 'ticketrelation/js/select_tickets_bundle.js')
+            add_script(req, 'ticketrelation/js/bundle.js')
 
             stream |= Transformer('//body').append(tag.script("""
+                (function () {
                 var data = %s;
                 var app = new Vue({
                     el: '#properties',
@@ -64,6 +65,7 @@ class SelectTicketPlugin(Component):
                         relation: data,
                     }
                 });
+                })();
             """ % json.dumps(data)))
 
         return stream
