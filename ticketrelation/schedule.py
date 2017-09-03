@@ -34,7 +34,7 @@ class TicketScheduleSystem(Component):
         if filename == "ticket.html" and 'ticket' in data:
             ticket = data['ticket']
 
-            if self._have_schedule(ticket):
+            if self._have_schedule(ticket) and ticket['type'] is not None:
 
                 add_stylesheet(req, 'ticketrelation/css/schedule.css')
 
