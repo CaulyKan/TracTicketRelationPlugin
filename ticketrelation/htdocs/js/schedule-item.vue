@@ -127,6 +127,7 @@
             },
             finishDate: function () {
                 var result = null;
+                var self = this;
                 this.tickets.forEach(function (t) {
                     if (t.activity_finish_date instanceof Date && (t.activity_finish_date > result || result == null)) {
                         result = t.activity_finish_date;
@@ -134,9 +135,9 @@
                     if (t.activity_finished_date instanceof Date && (t.activity_finished_date > result || result == null)) {
                         result = t.activity_finished_date;
                     }
-                    if (t.activity_finished_date == null && t.activity_started_date instanceof Date) {
-                        if (this.now > result || result == null) {
-                            result = this.now;
+                    if (t.activity_finished_date == null && t.activity_started_date instanceof Date && t.activity_started_date < self.now) {
+                        if (self.now > result || result == null) {
+                            result = self.now;
                         }
                     }
                 });
@@ -169,9 +170,9 @@
                 return ticket.activity_finish_date instanceof Date && ticket.activity_start_date  instanceof Date;
             },
             isActualAvailable: function (ticket) {
-                if (!ticket.activity_started_date instanceof Date) return false;
+                if (!(ticket.activity_started_date instanceof Date)) return false;
                 if (ticket.activity_finished_date instanceof Date) return true;
-                if (ticket.activity_finished_date == null) return true;
+                if (ticket.activity_finished_date == null && ticket.activity_started_date < this.now) return true;
                 return false;
             },
             getPlanSpaces: function(ticket) {
@@ -224,6 +225,7 @@
                 else return data;
             },
             getDateStr: function (date) {
+                if (!(date instanceof Date)) return '';
                 var y = date.getFullYear();
                 var m = date.getMonth() + 1;
                 var d = date.getDate();

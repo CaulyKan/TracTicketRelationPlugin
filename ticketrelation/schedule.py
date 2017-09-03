@@ -24,15 +24,6 @@ class TicketScheduleSystem(Component):
         tid = req.args.id
         ticket = Ticket(self.env, tid)
         result = self._get_schedule_info(ticket)
-        config = self.config['ticket-relation-schedule']
-
-        if config.getbool(ticket['type'] + '.show_schedule', False):
-            x = ticket
-            result['this,' + ticket['summary']] = \
-                [{'id': x.id, 'summary': x['summary'], 'status': x['status'], 'owner': x['owner'],
-                 'activity_started_date': x['activity_started_date'], 'activity_start_date': x['activity_start_date'],
-                 'activity_finished_date': x['activity_finished_date'], 'activity_finish_date': x['activity_finish_date']}]
-
         json_result = json.dumps(result, cls=DateTimeEncoder)
         req.send(json_result, 'application/json')
 
@@ -93,6 +84,14 @@ class TicketScheduleSystem(Component):
                          'activity_finished_date': x['activity_finished_date'], 'activity_finish_date': x['activity_finish_date']}
                         for x in target_tickets
                     ]
+
+        if config.getbool(ticket['type'] + '.show_schedule', False):
+            x = ticket
+            result['this,' + ticket['summary']] = \
+                [{'id': x.id, 'summary': x['summary'], 'status': x['status'], 'owner': x['owner'],
+                 'activity_started_date': x['activity_started_date'], 'activity_start_date': x['activity_start_date'],
+                 'activity_finished_date': x['activity_finished_date'], 'activity_finish_date': x['activity_finish_date']}]
+
         return result
 
     def _have_schedule(self, ticket):
@@ -106,6 +105,9 @@ class TicketScheduleSystem(Component):
                 target_role = 'a'
             if target_role != '' and config.getbool(relation.get_ticket_type(target_role) + '.show_schedule', False):
                 return True
+
+        if config.getbool(ticket['type'] + '.show_schedule', False):
+            return True
         return False
 
 
