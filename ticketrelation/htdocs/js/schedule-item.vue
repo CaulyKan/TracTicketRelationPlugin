@@ -1,15 +1,15 @@
 <template>
     <div>
-        <div class="schedule_header">
+        <div class="schedule_header" v-if="tickets.length>0">
             <h3>{{displayName}}</h3>
-        </div>
-        <div>
-            <table>
-                <tr>
-                    <td width="20%"> </td>
-                    <td>
-                        <table>
-                            <tbody>
+
+            <div>
+                <table>
+                    <tr>
+                        <td width="20%"> </td>
+                        <td>
+                            <table>
+                                <tbody>
                                 <tr>
                                     <td class="schedule_today schedule_date_right" v-if="todayStatus=='right-most'" >Today ▼</td>
                                     <td class="schedule_today schedule_date_right" v-else-if="todayStatus=='beyond-right'">Today ({{diffDate(finishDate, now)}}) ▶</td>
@@ -17,86 +17,87 @@
                                     <td class="schedule_today" v-else :width="todayPosition"></td>
                                     <td class="schedule_today schedule_today_fix" v-show="todayStatus=='normal'">▼ Today</td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </table>
-            <div v-for="ticket in tickets">
-                <table>
-                    <tbody>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <div v-for="ticket in tickets">
+                    <table>
+                        <tbody>
                         <tr>
                             <td width="20%">
                                 <div class="schedule_ticket_header">
-                                    <a :href="ticket.id">#{{ticket.id}} {{ticket.summary}} </a>
+                                    <a :href="url + '/ticket/' + ticket.id">#{{ticket.id}} {{ticket.summary}} </a>
                                 </div>
                                 <div class="schedule_ticket_header_status">{{ticket.status}}</div>
                             </td>
                             <td>
                                 <table class="schedule_table" v-if="isPlanAvailable(ticket)">
                                     <tbody>
-                                        <tr class="schedule_date_row">
-                                            <td class="schedule_leading_space" :width="getPlanSpaces(ticket)[0]"></td>
-                                            <td class="schedule_date_cell" :width="getPlanSpaces(ticket)[1]">
-                                                <div class="schedule_date_left">{{getDateStr(ticket.activity_start_date)}}</div>
-                                                <div class="schedule_date_right">{{getDateStr(ticket.activity_finish_date)}}</div>
-                                            </td>
-                                            <td class="schedule_following_space" :width="getPlanSpaces(ticket)[2]"></td>
-                                        </tr>
-                                        <tr class="schedule_plan_row">
-                                            <td class="schedule_leading_space" :width="getPlanSpaces(ticket)[0]"></td>
-                                            <td class="schedule_bar" :width="getPlanSpaces(ticket)[1]"></td>
-                                            <td class="schedule_following_space" :width="getPlanSpaces(ticket)[2]"></td>
-                                        </tr>
+                                    <tr class="schedule_date_row">
+                                        <td class="schedule_leading_space" :width="getPlanSpaces(ticket)[0]"></td>
+                                        <td class="schedule_date_cell" :width="getPlanSpaces(ticket)[1]">
+                                            <div class="schedule_date_left">{{getDateStr(ticket.activity_start_date)}}</div>
+                                            <div class="schedule_date_right">{{getDateStr(ticket.activity_finish_date)}}</div>
+                                        </td>
+                                        <td class="schedule_following_space" :width="getPlanSpaces(ticket)[2]"></td>
+                                    </tr>
+                                    <tr class="schedule_plan_row">
+                                        <td class="schedule_leading_space" :width="getPlanSpaces(ticket)[0]"></td>
+                                        <td class="schedule_bar" :width="getPlanSpaces(ticket)[1]"></td>
+                                        <td class="schedule_following_space" :width="getPlanSpaces(ticket)[2]"></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                                 <table class="schedule_table" v-if="isActualAvailable(ticket)">
                                     <tbody>
-                                        <tr class="schedule_actual_row">
-                                            <td class="schedule_leading_space" :width="getActualSpaces(ticket)[0]"></td>
-                                            <td class="schedule_bar" :width="getActualSpaces(ticket)[1]"></td>
-                                            <td class="schedule_following_space" :width="getActualSpaces(ticket)[2]"></td>
-                                        </tr>
-                                        <tr class="schedule_date_row">
-                                            <td class="schedule_leading_space" :width="getActualSpaces(ticket)[0]"></td>
-                                            <td class="schedule_date_cell" :width="getActualSpaces(ticket)[1]">
-                                                <div class="schedule_date_left">{{getDateStr(ticket.activity_started_date)}}</div>
-                                                <div class="schedule_date_right">{{getDateStr(ticket.activity_finished_date == null? now: ticket.activity_finished_date)}}</div>
-                                            </td>
-                                            <td class="schedule_following_space" :width="getActualSpaces(ticket)[2]"></td>
-                                        </tr>
+                                    <tr class="schedule_actual_row">
+                                        <td class="schedule_leading_space" :width="getActualSpaces(ticket)[0]"></td>
+                                        <td class="schedule_bar" :width="getActualSpaces(ticket)[1]"></td>
+                                        <td class="schedule_following_space" :width="getActualSpaces(ticket)[2]"></td>
+                                    </tr>
+                                    <tr class="schedule_date_row">
+                                        <td class="schedule_leading_space" :width="getActualSpaces(ticket)[0]"></td>
+                                        <td class="schedule_date_cell" :width="getActualSpaces(ticket)[1]">
+                                            <div class="schedule_date_left">{{getDateStr(ticket.activity_started_date)}}</div>
+                                            <div class="schedule_date_right">{{getDateStr(ticket.activity_finished_date == null? now: ticket.activity_finished_date)}}</div>
+                                        </td>
+                                        <td class="schedule_following_space" :width="getActualSpaces(ticket)[2]"></td>
+                                    </tr>
                                     </tbody>
                                 </table>
                                 <div v-if="!isPlanAvailable(ticket) && !isActualAvailable(ticket)">No available schedule info.</div>
                             </td>
                         </tr>
-                    </tbody>
+                        </tbody>
+                    </table>
+                </div>
+                <table>
+                    <tr>
+                        <td width="20%"> </td>
+                        <td>
+                            <table>
+                                <tbody>
+                                <tr>
+                                    <td class="schedule_today schedule_date_right" v-if="todayStatus=='right-most'" >Today ▲</td>
+                                    <td class="schedule_today schedule_date_right" v-else-if="todayStatus=='beyond-right'">Today ({{diffDate(finishDate, now)}}) ▶</td>
+                                    <td class="schedule_today" v-else-if="todayStatus=='beyond-left'">◀ Today ({{diffDate(now, startDate)}})</td>
+                                    <td class="schedule_today" v-else :width="todayPosition"></td>
+                                    <td class="schedule_today schedule_today_fix" v-show="todayStatus=='normal'">▲ Today</td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
                 </table>
             </div>
-            <table>
-                <tr>
-                    <td width="20%"> </td>
-                    <td>
-                        <table>
-                            <tbody>
-                            <tr>
-                                <td class="schedule_today schedule_date_right" v-if="todayStatus=='right-most'" >Today ▲</td>
-                                <td class="schedule_today schedule_date_right" v-else-if="todayStatus=='beyond-right'">Today ({{diffDate(finishDate, now)}}) ▶</td>
-                                <td class="schedule_today" v-else-if="todayStatus=='beyond-left'">◀ Today ({{diffDate(now, startDate)}})</td>
-                                <td class="schedule_today" v-else :width="todayPosition"></td>
-                                <td class="schedule_today schedule_today_fix" v-show="todayStatus=='normal'">▲ Today</td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </td>
-                </tr>
-            </table>
         </div>
     </div>
 </template>
 <script>
     module.exports = {
-        props: ['relationName', 'tickets'],
+        props: ['relationName', 'tickets', 'url'],
         created: function() {
             var self = this;
             this.tickets.forEach(function(t) {
@@ -226,10 +227,11 @@
             },
             getDateStr: function (date) {
                 if (!(date instanceof Date)) return '';
-                var y = date.getFullYear();
+                //var y = date.getFullYear();
                 var m = date.getMonth() + 1;
                 var d = date.getDate();
-                return y + '-' + m + '-' + d;
+                //return y + '-' + m + '-' + d;
+                return m + '-' + d;
             }
         }
     }

@@ -10991,9 +10991,7 @@ if (false) {(function () {
 //
 
 module.exports = {
-    props: ['schedule'],
-    methods: {
-    }
+    props: ['schedule', 'url'],
 }
 
 
@@ -11007,7 +11005,8 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
     return _c('div', [_c('schedule-item', {
       attrs: {
         "relationName": relationName,
-        "tickets": ticketInfo
+        "tickets": ticketInfo,
+        "url": _vm.url
       }
     })], 1)
   }))
@@ -11173,9 +11172,10 @@ if (false) {(function () {
 //
 //
 //
+//
 
 module.exports = {
-    props: ['relationName', 'tickets'],
+    props: ['relationName', 'tickets', 'url'],
     created: function() {
         var self = this;
         this.tickets.forEach(function(t) {
@@ -11305,10 +11305,11 @@ module.exports = {
         },
         getDateStr: function (date) {
             if (!(date instanceof Date)) return '';
-            var y = date.getFullYear();
+            //var y = date.getFullYear();
             var m = date.getMonth() + 1;
             var d = date.getDate();
-            return y + '-' + m + '-' + d;
+            //return y + '-' + m + '-' + d;
+            return m + '-' + d;
         }
     }
 }
@@ -11320,9 +11321,9 @@ module.exports = {
 
 "use strict";
 var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._self._c||_h;
-  return _c('div', [_c('div', {
+  return _c('div', [(_vm.tickets.length > 0) ? _c('div', {
     staticClass: "schedule_header"
-  }, [_c('h3', [_vm._v(_vm._s(_vm.displayName))])]), _vm._v(" "), _c('div', [_c('table', [_c('tr', [_c('td', {
+  }, [_c('h3', [_vm._v(_vm._s(_vm.displayName))]), _vm._v(" "), _c('div', [_c('table', [_c('tr', [_c('td', {
     attrs: {
       "width": "20%"
     }
@@ -11354,7 +11355,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       staticClass: "schedule_ticket_header"
     }, [_c('a', {
       attrs: {
-        "href": ticket.id
+        "href": _vm.url + '/ticket/' + ticket.id
       }
     }, [_vm._v("#" + _vm._s(ticket.id) + " " + _vm._s(ticket.summary) + " ")])]), _vm._v(" "), _c('div', {
       staticClass: "schedule_ticket_header_status"
@@ -11462,7 +11463,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       expression: "todayStatus=='normal'"
     }],
     staticClass: "schedule_today schedule_today_fix"
-  }, [_vm._v("▲ Today")])])])])])])])], 2)])
+  }, [_vm._v("▲ Today")])])])])])])])], 2)]) : _vm._e()])
 }
 var staticRenderFns = []
 render._withStripped = true

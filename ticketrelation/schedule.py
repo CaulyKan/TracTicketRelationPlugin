@@ -49,21 +49,23 @@ class TicketScheduleSystem(Component):
                         tag.h3(
                             tag.a('Schedule', id='schedule_label', href='#schedule_label'),
                         class_='foldable'),
-                        tag.div(tag.schedule(**{':schedule': 'schedule'}), class_='schedule_container', id='schedule_container'),
+                        tag.div(tag.schedule(**{':schedule': 'schedule', ':url': 'url'}), class_='schedule_container', id='schedule_container'),
                     id='schedule')
                 )
 
                 stream |= Transformer('//body').append(tag.script("""
-                (function() {
-                    var data = %s;
-                    var app = new Vue({
-                        el: '#schedule_container',
-                        data: {
-                            schedule: data,
-                        }
+                    $(window).load(function() {
+                        var data = %s;
+                        var url = "%s";
+                        var app = new Vue({
+                            el: '#schedule_container',
+                            data: {
+                                schedule: data,
+                                url: url,
+                            }
+                        });
                     });
-                })();
-                """ % (json.dumps(schedule, cls=DateTimeEncoder), )))
+                """ % (json.dumps(schedule, cls=DateTimeEncoder), self.env.abs_href.base)))
 
         return stream
 
@@ -153,17 +155,19 @@ class ScheduleMacro(WikiMacroBase):
         random_id = str(random.randint(0, 10000))
 
         return tag.div(tag.div(
-            tag.schedule(**{':schedule': 'schedule'}), class_='schedule_container', id='schedule_container_' + random_id),
+            tag.schedule(**{':schedule': 'schedule', ':url': 'url'}), class_='schedule_container', id='schedule_container_' + random_id),
             tag.script("""         
                 $(window).load(function() {
                     var data = %s;
+                    var url = "%s";
                     var app = new window.Vue({
                         el: '#schedule_container_%s',
                         data: {
                             schedule: data,
+                            url: url,
                         }
                     });
-                });""" % (json.dumps(schedule_info, cls=DateTimeEncoder), random_id))
+                });""" % (json.dumps(schedule_info, cls=DateTimeEncoder), self.env.abs_href.base, random_id))
         )
 
     def is_inline(self, content):
