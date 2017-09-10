@@ -10,6 +10,7 @@ from trac.core import Component, implements
 from tracrpc.api import IXMLRPCHandler
 
 from ticketrelation.api import Relation, TicketRelationSystem
+from ticketrelation.schedule import TicketScheduleSystem
 
 
 class TicketRelationRPC(Component):
@@ -27,6 +28,7 @@ class TicketRelationRPC(Component):
 
     def xmlrpc_methods(self):
         yield 'WIKI_VIEW', ((dict,),), self.getTicketRelations
+        yield 'WIKI_VIEW', ((list,),), self.getScheduledTypes
 
     def getTicketRelations(self, req):
         """
@@ -38,3 +40,14 @@ class TicketRelationRPC(Component):
         result = ticket_relation_system.build_relations()
 
         return [i.__dict__ for i in result.values()]
+
+    def getScheduledTypes(self, req):
+        """
+        Get the types that should show shcedule
+        """
+
+        tss = TicketScheduleSystem(self.env)
+
+        result = tss.get_scheduled_types()
+
+        return result

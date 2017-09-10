@@ -11,6 +11,7 @@ from trac.ticket import TicketSystem, Ticket
 from trac.web.chrome import add_stylesheet, add_script
 from trac.wiki.macros import WikiMacroBase, MacroError
 from trac.ticket.query import TicketQueryMacro, Query, QuerySyntaxError, QueryValueError
+from trac.ticket.model import Type
 
 from .api import TicketRelationSystem
 
@@ -68,6 +69,11 @@ class TicketScheduleSystem(Component):
                 """ % (json.dumps(schedule, cls=DateTimeEncoder), self.env.abs_href.base)))
 
         return stream
+
+    def get_scheduled_types(self):
+        types = Type.select(self.env)
+        config = self.config['ticket-relation-schedule']
+        return [t.name for t in types if config.getbool(t.name + '.show_schedule', False)]
 
     def get_schedule(self, tickets):
 

@@ -2,7 +2,7 @@
 from trac.core import Component, implements
 from trac.web import ITemplateStreamFilter
 from trac.ticket import ITicketManipulator, ITicketChangeListener
-from trac.ticket.model import Ticket, TicketSystem
+from trac.ticket.model import Ticket, TicketSystem, Type
 from genshi.filters import Transformer
 from genshi.builder import tag
 
@@ -232,6 +232,7 @@ class TicketRelationSystem(Component):
             self.log.error(e.message)
 
         return stream
+
 
 class Relation(object):
 
