@@ -37,6 +37,10 @@ tr.schedule_plan_row, tr.schedule_actual_row {
     width: 100%;
 }
 
+.schedule_container table {
+    width: 100%;
+}
+
 .schedule_date_left {
     float: left;
 }

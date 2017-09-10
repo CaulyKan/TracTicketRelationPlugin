@@ -1,14 +1,18 @@
 import json
+import re
+import random
+from datetime import datetime
+from itertools import groupby
 from trac.core import Component, implements
 from genshi.builder import tag
 from genshi.filters import Transformer
 from trac.web import ITemplateStreamFilter, IRequestHandler
 from trac.ticket import TicketSystem, Ticket
-from trac.web.chrome import add_stylesheet
+from trac.web.chrome import add_stylesheet, add_script
+from trac.wiki.macros import WikiMacroBase, MacroError
+from trac.ticket.query import TicketQueryMacro, Query, QuerySyntaxError, QueryValueError
+
 from .api import TicketRelationSystem
-from trac.util import to_list
-from datetime import datetime
-from genshi.input import HTML
 
 class TicketScheduleSystem(Component):
 
@@ -34,7 +38,7 @@ class TicketScheduleSystem(Component):
         if filename == "ticket.html" and 'ticket' in data:
             ticket = data['ticket']
 
-            if self._have_schedule(ticket) and ticket['type'] is not None:
+            if ticket.id > 0 and self._have_schedule(ticket):
 
                 add_stylesheet(req, 'ticketrelation/css/schedule.css')
 
@@ -45,7 +49,7 @@ class TicketScheduleSystem(Component):
                         tag.h3(
                             tag.a('Schedule', id='schedule_label', href='#schedule_label'),
                         class_='foldable'),
-                        tag.div(tag.schedule(**{':schedule': 'schedule'}), id='schedule_container'),
+                        tag.div(tag.schedule(**{':schedule': 'schedule'}), class_='schedule_container', id='schedule_container'),
                     id='schedule')
                 )
 
@@ -63,6 +67,13 @@ class TicketScheduleSystem(Component):
 
         return stream
 
+    def get_schedule(self, tickets):
+
+        return [{'id': x.id if hasattr(x, 'id') else x['id'], 'summary': x['summary'], 'status': x['status'], 'owner': x['owner'],
+                 'activity_started_date': x['activity_started_date'], 'activity_start_date': x['activity_start_date'],
+                 'activity_finished_date': x['activity_finished_date'], 'activity_finish_date': x['activity_finish_date']}
+                for x in tickets]
+
     def _get_schedule_info(self, ticket):
         trs = TicketRelationSystem(self.env)
         config = self.config['ticket-relation-schedule']
@@ -78,12 +89,7 @@ class TicketScheduleSystem(Component):
             if target_role != '' and config.getbool(relation.get_ticket_type(target_role) + '.show_schedule', False):
                 target_tickets = trs.get_relations(ticket, relation, trs.opposite(target_role))
                 result[relation.name + '_' + target_role + ',' + relation.get_label(trs.opposite(target_role))] = \
-                    [
-                        {'id': x.id, 'summary': x['summary'], 'status': x['status'], 'owner': x['owner'],
-                         'activity_started_date': x['activity_started_date'], 'activity_start_date': x['activity_start_date'],
-                         'activity_finished_date': x['activity_finished_date'], 'activity_finish_date': x['activity_finish_date']}
-                        for x in target_tickets
-                    ]
+                    self.get_schedule(target_tickets)
 
         if config.getbool(ticket['type'] + '.show_schedule', False):
             x = ticket
@@ -108,6 +114,59 @@ class TicketScheduleSystem(Component):
 
         if config.getbool(ticket['type'] + '.show_schedule', False):
             return True
+        return False
+
+
+class ScheduleMacro(WikiMacroBase):
+    realm = TicketSystem.realm
+
+    def expand_macro(self, formatter, name, content):
+        req = formatter.req
+        query_string, kwargs, format = TicketQueryMacro.parse_args(content)
+        if query_string:
+            query_string += '&'
+
+        query_string += '&'.join('%s=%s' % item for item in kwargs.iteritems())
+        try:
+            query = Query.from_string(self.env, query_string)
+        except QuerySyntaxError as e:
+            raise MacroError(e)
+
+        try:
+            tickets = query.execute(req)
+        except QueryValueError as e:
+            raise MacroError(e)
+
+        # Formats above had their own permission checks, here we need to
+        # do it explicitly:
+
+        tickets = [t for t in tickets
+                   if 'TICKET_VIEW' in req.perm(self.realm, t['id'])]
+
+        tickets = map(lambda x: Ticket(self.env, x['id']), tickets)
+
+        schedule_info = {'test': TicketScheduleSystem(self.env).get_schedule(tickets)}
+
+        add_script(req, 'ticketrelation/js/bundle.js')
+        add_stylesheet(req, 'ticketrelation/css/schedule.css')
+
+        random_id = str(random.randint(0, 10000))
+
+        return tag.div(tag.div(
+            tag.schedule(**{':schedule': 'schedule'}), class_='schedule_container', id='schedule_container_' + random_id),
+            tag.script("""         
+                $(window).load(function() {
+                    var data = %s;
+                    var app = new window.Vue({
+                        el: '#schedule_container_%s',
+                        data: {
+                            schedule: data,
+                        }
+                    });
+                });""" % (json.dumps(schedule_info, cls=DateTimeEncoder), random_id))
+        )
+
+    def is_inline(self, content):
         return False
 
 

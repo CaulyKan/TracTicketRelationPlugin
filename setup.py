@@ -15,7 +15,7 @@ Created on 2014-03-12
 from setuptools import find_packages, setup
 
 setup(
-    name='TracTicketRelationPlugin', version='1.3',
+    name='TracTicketRelationPlugin', version='1.4',
     packages=find_packages(exclude=['*.tests*']),
     license = "BSD 3-Clause",
     author_email='cauliflower.kan@gmail.com',
