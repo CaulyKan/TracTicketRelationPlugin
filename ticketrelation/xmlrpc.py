@@ -5,13 +5,16 @@
 #
 # This software is licensed as described in the file COPYING, which
 # you should have received as part of this distribution.
-
+from datetime import datetime
 from trac.core import Component, implements
+from trac.util.datefmt import to_utimestamp, FixedOffset
 from tracrpc.api import IXMLRPCHandler
 
 from ticketrelation.api import Relation, TicketRelationSystem
 from ticketrelation.schedule import TicketScheduleSystem
+from ticketrelation.earn_value import EarnValueSystem
 
+utc = FixedOffset(0, 'UTC')
 
 class TicketRelationRPC(Component):
     """
@@ -29,6 +32,8 @@ class TicketRelationRPC(Component):
     def xmlrpc_methods(self):
         yield 'WIKI_VIEW', ((dict,),), self.getTicketRelations
         yield 'WIKI_VIEW', ((list,),), self.getScheduledTypes
+        yield "WIKI_VIEW", ((dict, str, str), (dict, str, str, str)), self.getUserEarnValue
+        yield "WIKI_VIEW", ((dict, str, str), (dict, str, str, str)), self.getUserEarnValueDetail
 
     def getTicketRelations(self, req):
         """
@@ -49,5 +54,33 @@ class TicketRelationRPC(Component):
         tss = TicketScheduleSystem(self.env)
 
         result = tss.get_scheduled_types()
+
+        return result
+
+    def getUserEarnValue(self, req, user, start_time, end_time=None):
+        """
+        Get a dict of user-earn value
+        """
+
+        evs = EarnValueSystem(self.env)
+
+        start_time = to_utimestamp(datetime.strptime(start_time, '%Y-%m-%d').replace(tzinfo=utc))
+        end_time = to_utimestamp(datetime.strptime(end_time, '%Y-%m-%d').replace(tzinfo=utc)) if end_time is not None else None
+
+        result = evs.get_users_ev(user, start_time, end_time)
+
+        return result
+
+    def getUserEarnValueDetail(self, req, user, start_time, end_time=None):
+        """
+        Get a dict of user-earn value detail
+        """
+
+        evs = EarnValueSystem(self.env)
+
+        start_time = to_utimestamp(datetime.strptime(start_time, '%Y-%m-%d').replace(tzinfo=utc))
+        end_time = to_utimestamp(datetime.strptime(end_time, '%Y-%m-%d').replace(tzinfo=utc)) if end_time is not None else None
+
+        result = evs.get_users_ev_detail(user, start_time, end_time)
 
         return result
