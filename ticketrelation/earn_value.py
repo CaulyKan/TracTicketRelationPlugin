@@ -93,6 +93,11 @@ class EarnValueSystem(Component):
         return label, '', ''
 
     def get_ticket_changes(self, req, ticket, action):
+        config = self.config['ticket-workflow']
+        if config.get(action + '.update_time', '') != '':
+            field = config.get(action + '.update_time').strip()
+            if field in ticket:
+                return {field: datetime_now(FixedOffset(0, 'UTC'))}
         return {}
 
     def apply_action_side_effects(self, req, ticket, action):
