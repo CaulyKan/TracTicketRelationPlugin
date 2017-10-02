@@ -22,13 +22,13 @@
                         </td>
                     </tr>
                 </table>
-                <div v-for="ticket in tickets">
+                <div v-for="ticket in tickets" v-if="parseInt(config.showUnavailable) || isPlanAvailable(ticket) || isActualAvailable(ticket)">
                     <table>
                         <tbody>
                         <tr>
                             <td width="20%">
                                 <div class="schedule_ticket_header">
-                                    <a :href="url + '/ticket/' + ticket.id">#{{ticket.id}} {{ticket.summary}} </a>
+                                    <a :href="config.url + '/ticket/' + ticket.id">#{{ticket.id}} {{ticket.summary}} </a>
                                 </div>
                                 <div class="schedule_ticket_header_status">{{ticket.status}}</div>
                             </td>
@@ -97,7 +97,7 @@
 </template>
 <script>
     module.exports = {
-        props: ['relationName', 'tickets', 'url'],
+        props: ['relationName', 'tickets', 'config'],
         created: function() {
             var self = this;
             this.tickets.forEach(function(t) {
@@ -116,6 +116,10 @@
             },
             startDate: function () {
                 var result = null;
+                if (this.isDate(this.config.startDate)) {
+                    return this.toDate(this.config.startDate);
+                }
+
                 this.tickets.forEach(function (t) {
                     if (t.activity_start_date instanceof Date && (t.activity_start_date < result || result == null)) {
                         result = t.activity_start_date;
@@ -128,6 +132,9 @@
             },
             finishDate: function () {
                 var result = null;
+                if (this.isDate(this.config.finishDate)) {
+                    return this.toDate (this.config.finishDate);
+                }
                 var self = this;
                 this.tickets.forEach(function (t) {
                     if (t.activity_finish_date instanceof Date && (t.activity_finish_date > result || result == null)) {
@@ -168,11 +175,16 @@
         },
         methods: {
             isPlanAvailable: function (ticket) {
-                return ticket.activity_finish_date instanceof Date && ticket.activity_start_date  instanceof Date;
+                return ticket.activity_finish_date instanceof Date && ticket.activity_start_date instanceof Date
+                    && !(ticket.activity_finish_date < this.startDate || ticket.activity_start_date > this.finishDate);
             },
             isActualAvailable: function (ticket) {
                 if (!(ticket.activity_started_date instanceof Date)) return false;
-                if (ticket.activity_finished_date instanceof Date) return true;
+                if (ticket.activity_finished_date instanceof Date) {
+                    if (ticket.activity_finished_date < this.startDate || ticket.activity_started_date > this.finishDate) return false;
+                    else return true;
+                }
+
                 if (ticket.activity_finished_date == null && ticket.activity_started_date < this.now) return true;
                 return false;
             },
@@ -201,7 +213,8 @@
                 return parseInt((date2 - date1)/(24*3600*1000));
             },
             isDate: function (data) {
-                if (data instanceof Date && data.toString() != "Invalid Date") return True;
+                if (data && typeof(data) == 'string' && data.match(/^[\+\-][0-9]+$/)) return true;
+                if (data instanceof Date && data.toString() != "Invalid Date") return true;
                 if (typeof(data) == 'string' ) {
                     var result = new Date(data);
                     return result.toString() != "Invalid Date";
@@ -209,7 +222,12 @@
                 else return false;
             },
             toDate: function (data) {
-                if (typeof(data) == 'string' && this.isDate(data)) {
+                if (data && typeof(data) == 'string' && data.match(/^[\+\-][0-9]+$/)) {
+                    var now = new Date(Date.now());
+                    var offset = parseInt(data);
+                    return new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset, 0, 0, 0);
+                }
+                else if (typeof(data) == 'string' && this.isDate(data)) {
                     var date = new Date(data);
                     var y = date.getFullYear();
                     var m = date.getMonth();

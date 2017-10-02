@@ -130,11 +130,10 @@ class ScheduleMacro(WikiMacroBase):
 
     def expand_macro(self, formatter, name, content):
         req = formatter.req
-        query_string, kwargs, format = TicketQueryMacro.parse_args(content)
-        if query_string:
-            query_string += '&'
+        query_string = TicketQueryMacro.parse_args(content)[0]
 
-        query_string += '&'.join('%s=%s' % item for item in kwargs.iteritems())
+        kwargs = dict([item.split('=') for item in content.split(',')[1:]])
+
         try:
             query = Query.from_string(self.env, query_string)
         except QuerySyntaxError as e:
@@ -160,20 +159,27 @@ class ScheduleMacro(WikiMacroBase):
 
         random_id = str(random.randint(0, 10000))
 
+        config = {
+            'url': self.env.abs_href.base,
+            'startDate': kwargs.get('startdate', None),
+            'finishDate': kwargs.get('finishdate', None),
+            'showUnavailable': kwargs.get('showunavailable', 1)
+        }
+
         return tag.div(tag.div(
-            tag.schedule(**{':schedule': 'schedule', ':url': 'url'}), class_='schedule_container', id='schedule_container_' + random_id),
+            tag.schedule(**{':schedule': 'schedule', ':config': 'config'}), class_='schedule_container', id='schedule_container_' + random_id),
             tag.script("""         
                 $(window).load(function() {
                     var data = %s;
-                    var url = "%s";
+                    var config = %s;
                     var app = new window.Vue({
                         el: '#schedule_container_%s',
                         data: {
                             schedule: data,
-                            url: url,
+                            config: config,
                         }
                     });
-                });""" % (json.dumps(schedule_info, cls=DateTimeEncoder), self.env.abs_href.base, random_id))
+                });""" % (json.dumps(schedule_info, cls=DateTimeEncoder), json.dumps(config, cls=DateTimeEncoder), random_id))
         )
 
     def is_inline(self, content):

@@ -1,12 +1,12 @@
 <template>
     <div>
         <div v-for="ticketInfo, relationName in schedule" >
-            <schedule-item :relationName="relationName" :tickets="ticketInfo" :url="url"></schedule-item>
+            <schedule-item :relationName="relationName" :tickets="ticketInfo" :config="config"></schedule-item>
         </div>
     </div>
 </template>
 <script>
     module.exports = {
-        props: ['schedule', 'url'],
+        props: ['schedule', 'config'],
     }
 </script>

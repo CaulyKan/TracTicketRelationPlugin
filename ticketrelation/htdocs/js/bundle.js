@@ -10991,7 +10991,7 @@ if (false) {(function () {
 //
 
 module.exports = {
-    props: ['schedule', 'url'],
+    props: ['schedule', 'config'],
 }
 
 
@@ -11006,7 +11006,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       attrs: {
         "relationName": relationName,
         "tickets": ticketInfo,
-        "url": _vm.url
+        "config": _vm.config
       }
     })], 1)
   }))
@@ -11175,7 +11175,7 @@ if (false) {(function () {
 //
 
 module.exports = {
-    props: ['relationName', 'tickets', 'url'],
+    props: ['relationName', 'tickets', 'config'],
     created: function() {
         var self = this;
         this.tickets.forEach(function(t) {
@@ -11194,6 +11194,10 @@ module.exports = {
         },
         startDate: function () {
             var result = null;
+            if (this.isDate(this.config.startDate)) {
+                return this.toDate(this.config.startDate);
+            }
+
             this.tickets.forEach(function (t) {
                 if (t.activity_start_date instanceof Date && (t.activity_start_date < result || result == null)) {
                     result = t.activity_start_date;
@@ -11206,6 +11210,9 @@ module.exports = {
         },
         finishDate: function () {
             var result = null;
+            if (this.isDate(this.config.finishDate)) {
+                return this.toDate (this.config.finishDate);
+            }
             var self = this;
             this.tickets.forEach(function (t) {
                 if (t.activity_finish_date instanceof Date && (t.activity_finish_date > result || result == null)) {
@@ -11246,11 +11253,16 @@ module.exports = {
     },
     methods: {
         isPlanAvailable: function (ticket) {
-            return ticket.activity_finish_date instanceof Date && ticket.activity_start_date  instanceof Date;
+            return ticket.activity_finish_date instanceof Date && ticket.activity_start_date instanceof Date
+                && !(ticket.activity_finish_date < this.startDate || ticket.activity_start_date > this.finishDate);
         },
         isActualAvailable: function (ticket) {
             if (!(ticket.activity_started_date instanceof Date)) return false;
-            if (ticket.activity_finished_date instanceof Date) return true;
+            if (ticket.activity_finished_date instanceof Date) {
+                if (ticket.activity_finished_date < this.startDate || ticket.activity_started_date > this.finishDate) return false;
+                else return true;
+            }
+
             if (ticket.activity_finished_date == null && ticket.activity_started_date < this.now) return true;
             return false;
         },
@@ -11279,7 +11291,8 @@ module.exports = {
             return parseInt((date2 - date1)/(24*3600*1000));
         },
         isDate: function (data) {
-            if (data instanceof Date && data.toString() != "Invalid Date") return True;
+            if (data && typeof(data) == 'string' && data.match(/^[\+\-][0-9]+$/)) return true;
+            if (data instanceof Date && data.toString() != "Invalid Date") return true;
             if (typeof(data) == 'string' ) {
                 var result = new Date(data);
                 return result.toString() != "Invalid Date";
@@ -11287,7 +11300,12 @@ module.exports = {
             else return false;
         },
         toDate: function (data) {
-            if (typeof(data) == 'string' && this.isDate(data)) {
+            if (data && typeof(data) == 'string' && data.match(/^[\+\-][0-9]+$/)) {
+                var now = new Date(Date.now());
+                var offset = parseInt(data);
+                return new Date(now.getFullYear(), now.getMonth(), now.getDate() + offset, 0, 0, 0);
+            }
+            else if (typeof(data) == 'string' && this.isDate(data)) {
                 var date = new Date(data);
                 var y = date.getFullYear();
                 var m = date.getMonth();
@@ -11347,7 +11365,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
     }],
     staticClass: "schedule_today schedule_today_fix"
   }, [_vm._v("▼ Today")])])])])])])]), _vm._v(" "), _vm._l((_vm.tickets), function(ticket) {
-    return _c('div', [_c('table', [_c('tbody', [_c('tr', [_c('td', {
+    return (parseInt(_vm.config.showUnavailable) || _vm.isPlanAvailable(ticket) || _vm.isActualAvailable(ticket)) ? _c('div', [_c('table', [_c('tbody', [_c('tr', [_c('td', {
       attrs: {
         "width": "20%"
       }
@@ -11355,7 +11373,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       staticClass: "schedule_ticket_header"
     }, [_c('a', {
       attrs: {
-        "href": _vm.url + '/ticket/' + ticket.id
+        "href": _vm.config.url + '/ticket/' + ticket.id
       }
     }, [_vm._v("#" + _vm._s(ticket.id) + " " + _vm._s(ticket.summary) + " ")])]), _vm._v(" "), _c('div', {
       staticClass: "schedule_ticket_header_status"
@@ -11439,7 +11457,7 @@ var render = function () {var _vm=this;var _h=_vm.$createElement;var _c=_vm._sel
       attrs: {
         "width": _vm.getActualSpaces(ticket)[2]
       }
-    })])])]) : _vm._e(), _vm._v(" "), (!_vm.isPlanAvailable(ticket) && !_vm.isActualAvailable(ticket)) ? _c('div', [_vm._v("No available schedule info.")]) : _vm._e()])])])])])
+    })])])]) : _vm._e(), _vm._v(" "), (!_vm.isPlanAvailable(ticket) && !_vm.isActualAvailable(ticket)) ? _c('div', [_vm._v("No available schedule info.")]) : _vm._e()])])])])]) : _vm._e()
   }), _vm._v(" "), _c('table', [_c('tr', [_c('td', {
     attrs: {
       "width": "20%"
