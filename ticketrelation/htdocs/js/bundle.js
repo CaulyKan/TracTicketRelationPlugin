@@ -11178,6 +11178,11 @@ module.exports = {
     props: ['relationName', 'tickets', 'config'],
     created: function() {
         var self = this;
+        this.tickets.sort(function (a, b) {
+            if (!a.activity_start_date) return -1;
+            if (!b.activity_start_date) return 1;
+            return a.activity_start_date - b.activity_start_date;
+        });
         this.tickets.forEach(function(t) {
             t.activity_start_date = self.toDate(t.activity_start_date);
             t.activity_started_date = self.toDate(t.activity_started_date);

@@ -50,23 +50,30 @@ class TicketScheduleSystem(Component):
                         tag.h3(
                             tag.a('Schedule', id='schedule_label', href='#schedule_label'),
                         class_='foldable'),
-                        tag.div(tag.schedule(**{':schedule': 'schedule', ':url': 'url'}), class_='schedule_container', id='schedule_container'),
+                        tag.div(tag.schedule(**{':schedule': 'schedule', ':config': 'config'}), class_='schedule_container', id='schedule_container'),
                     id='schedule')
                 )
+
+                config = {
+                    'url': req.base_url,
+                    'startDate': None,
+                    'finishDate': None,
+                    'showUnavailable': 1
+                }
 
                 stream |= Transformer('//body').append(tag.script("""
                     $(window).load(function() {
                         var data = %s;
-                        var url = "%s";
+                        var config = %s;
                         var app = new Vue({
                             el: '#schedule_container',
                             data: {
                                 schedule: data,
-                                url: url,
+                                config: config,
                             }
                         });
                     });
-                """ % (json.dumps(schedule, cls=DateTimeEncoder), self.env.abs_href.base)))
+                """ % (json.dumps(schedule, cls=DateTimeEncoder), json.dumps(config, cls=DateTimeEncoder))))
 
         return stream
 
@@ -160,7 +167,7 @@ class ScheduleMacro(WikiMacroBase):
         random_id = str(random.randint(0, 10000))
 
         config = {
-            'url': self.env.abs_href.base,
+            'url': req.base_url,
             'startDate': kwargs.get('startdate', None),
             'finishDate': kwargs.get('finishdate', None),
             'showUnavailable': kwargs.get('showunavailable', 1)
