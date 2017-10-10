@@ -93,11 +93,6 @@ class EarnValueSystem(Component):
         return label, '', ''
 
     def get_ticket_changes(self, req, ticket, action):
-        config = self.config['ticket-workflow']
-        if config.get(action + '.update_time', '') != '':
-            field = config.get(action + '.update_time').strip()
-            if field in ticket:
-                return {field: datetime_now(FixedOffset(0, 'UTC'))}
         return {}
 
     def apply_action_side_effects(self, req, ticket, action):
@@ -122,7 +117,13 @@ class EarnValueSystem(Component):
                     INSERT INTO earn_value VALUES (%s, %s, %s, %s, %s, %s, %s);
                 """, (ticket.id, 'workflow', action, value, req.authname, time, 0))
 
-    def get_users(self, users_perms_and_groups=None):
+        if config.get(action + '.update_time', '') != '':
+            field = config.get(action + '.update_time').strip()
+            if field in ticket:
+                ticket[field] = datetime_now(FixedOffset(0, 'UTC'))
+            ticket.save_changes()
+
+    def get_users(self, req, users_perms_and_groups=None):
         ps = PermissionSystem(self.env)
 
         users = map(lambda x: x[0], self.env.get_known_users())
@@ -135,8 +136,10 @@ class EarnValueSystem(Component):
 
         def append_owners(users_perms_and_groups):
             for user_perm_or_group in users_perms_and_groups:
-                if users_perms_and_groups in users:
-                    return owners.add(users_perms_and_groups)
+                if user_perm_or_group == '$USER':
+                    owners.add(req.session.sid)
+                elif user_perm_or_group in users:
+                    owners.add(users_perms_and_groups)
                 elif user_perm_or_group == 'authenticated':
                     owners.update(set(u[0] for u in self.env.get_known_users()))
                 elif user_perm_or_group.isupper():
@@ -168,36 +171,39 @@ class EarnValueSystem(Component):
 
     def get_users_ev(self, users, start_time, end_time=None):
 
-        return dict([(user, self.get_user_ev(user, start_time, end_time)) for user in self.get_users(users)])
+        return dict([(user, self.get_user_ev(user, start_time, end_time)) for user in users])
 
     def get_user_ev_detail(self, user, start_time, end_time=None):
 
         sql = """ SELECT e.ticket as id, e.type as ev_type, e.action, e.value, e.user, e.time, 
-                  t.summary, t.type, s.value as fullname from earn_value e, ticket t 
-                  left join session_attribute s on s.sid = e.user
-                  where e.user = %s and t.id = e.ticket and s.name='name' and e.time > %s"""
+                  t.summary, t.type from earn_value e, ticket t 
+                  where e.user = %s and t.id = e.ticket and e.time > %s"""
 
         if end_time is not None:
-            sql += " and time < %s"
+            sql += " and e.time < %s"
 
         param = (user, start_time, end_time) if end_time is not None else (user, start_time)
         result = self.env.db_query(sql, param)
 
+        users = self.env.get_known_users(as_dict=True)
+
         for i in result:
+            fullname = users.get(i[4], (None, ))[0]
             yield {'id': i[0],
                    'ev_type': i[1],
                    'action': i[2],
                    'action_name': self.config['ticket-workflow'].get(i[2] + '.name', ''),
                    'value': i[3],
                    'user': i[4],
-                   'time': i[5],
+                   'time': datetime.datetime.fromtimestamp(i[5]/1000000).strftime('%Y-%m-%d %H:%M:%S'),
                    'summary': i[6],
                    'type': i[7],
-                   'fullname': i[8]}
+                   'fullname': fullname if fullname is not None else i[4]
+                   }
 
     def get_users_ev_detail(self, users, start_time, end_time=None):
 
-        return dict([(user, list(self.get_user_ev_detail(user, start_time, end_time))) for user in self.get_users(users)])
+        return dict([(user, list(self.get_user_ev_detail(user, start_time, end_time))) for user in users])
 
 
 class EarnValueMacro(WikiMacroBase):
@@ -206,8 +212,8 @@ class EarnValueMacro(WikiMacroBase):
     def expand_macro(self, formatter, name, content):
         evs = EarnValueSystem(self.env)
         kwargs = self._parse_arg(content)
-        users = evs.get_users(kwargs.get('users', 'authenticated'))
-        format = kwargs.get('format', 'plain')
+        users = evs.get_users(formatter.req, kwargs.get('users', 'authenticated'))
+        format = kwargs.get('format', 'table')
         start_time = self._parse_date(kwargs.get('start'), 0)
         end_time = self._parse_date(kwargs.get('end'), None)
 
@@ -218,6 +224,29 @@ class EarnValueMacro(WikiMacroBase):
                 tags.append(tag.span(k + ': ' + str(v)))
                 tags.append(tag.br)
             return tag.p(*tags)
+
+        elif format == 'table':
+            evc = evs.get_users_ev_detail(users, start_time, end_time)
+            rows = [tag.tr(
+                tag.td(ev['action_name']),
+                tag.td(ev['value']),
+                tag.td(ev['fullname']),
+                tag.td(ev['time']),
+                tag.td(ev['summary'])
+            ) for evcs in evc.values() for ev in evcs ]
+            return tag.div(
+                tag.table(tag.thead(
+                    tag.tr(
+                        tag.th('Action'),
+                        tag.th('Value'),
+                        tag.th('User'),
+                        tag.th('Date'),
+                        tag.th('Summary'), class_='trac-columns')
+                ),
+                tag.tbody(
+                    *rows
+                ), class_='listing tickets')
+            )
 
         return None
 

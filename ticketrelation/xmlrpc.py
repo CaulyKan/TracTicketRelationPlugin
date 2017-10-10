@@ -67,7 +67,8 @@ class TicketRelationRPC(Component):
         start_time = to_utimestamp(datetime.strptime(start_time, '%Y-%m-%d').replace(tzinfo=utc))
         end_time = to_utimestamp(datetime.strptime(end_time, '%Y-%m-%d').replace(tzinfo=utc)) if end_time is not None else None
 
-        result = evs.get_users_ev(user, start_time, end_time)
+        users = evs.get_users(req, user)
+        result = evs.get_users_ev(users, start_time, end_time)
 
         return result
 
@@ -81,6 +82,7 @@ class TicketRelationRPC(Component):
         start_time = to_utimestamp(datetime.strptime(start_time, '%Y-%m-%d').replace(tzinfo=utc))
         end_time = to_utimestamp(datetime.strptime(end_time, '%Y-%m-%d').replace(tzinfo=utc)) if end_time is not None else None
 
-        result = evs.get_users_ev_detail(user, start_time, end_time)
+        users = evs.get_users(req, user)
+        result = evs.get_users_ev_detail(users, start_time, end_time)
 
         return result
