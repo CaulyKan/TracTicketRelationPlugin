@@ -139,7 +139,7 @@ class EarnValueSystem(Component):
                 if user_perm_or_group == '$USER':
                     owners.add(req.session.sid)
                 elif user_perm_or_group in users:
-                    owners.add(users_perms_and_groups)
+                    owners.add(user_perm_or_group)
                 elif user_perm_or_group == 'authenticated':
                     owners.update(set(u[0] for u in self.env.get_known_users()))
                 elif user_perm_or_group.isupper():
